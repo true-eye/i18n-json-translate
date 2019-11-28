@@ -1,0 +1,28 @@
+{
+  "name": "on-new-line",
+  "version": "0.0.1",
+  "description": "Hijacks NodeJS Stream and emits events when newline(s) written to the output.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bubkoo/on-new-line.git"
+  },
+  "keywords": [
+    "stream",
+    "on",
+    "newline",
+    "newlines",
+    "event",
+    "detect",
+    "hijack"
+  ],
+  "author": "bubkoo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bubkoo/on-new-line/issues"
+  },
+  "homepage": "https://github.com/bubkoo/on-new-line#readme"
+}
