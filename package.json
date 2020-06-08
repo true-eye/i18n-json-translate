@@ -5,7 +5,6 @@
   "main": "index.js",
   "dependencies": {
     "@vitalets/google-translate-api": "^3.0.0",
-    "ascii-progress": "^1.0.5",
     "yandex-translate-async": "^1.1.2"
   },
   "devDependencies": {},

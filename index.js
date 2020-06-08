@@ -1,6 +1,5 @@
 const fs = require('fs');
 const translate = require('@vitalets/google-translate-api');
-const ProgressBar = require('ascii-progress');
 const languages = [
     'fr',
     'es',
@@ -10,11 +9,6 @@ const languages = [
 
 let sample;
 let resources;
-
-const bar = new ProgressBar({ 
-    schema: ':bar',
-    total : 100
-});
 
 try {
     inputFileContents = fs.readFileSync('./sample.js', 'utf8');
@@ -45,8 +39,8 @@ const parseNode = (() => {
         } else {
             percentage = 0;
         }
-        bar.update(percentage*100);
-        // console.log({completed, total, percentage});
+        // bar.update(percentage*100);
+        console.log({completed, total, percentage});
     }
 
     return async(node) => {
@@ -106,6 +100,5 @@ const nodeToText = (node, depth = 0, keyName = 'const resources =') => {
 
 (async() => {
     await parseNode(resources);
-    bar.clear()
     fs.writeFileSync('./output.js', nodeToText(resources));    
 })();

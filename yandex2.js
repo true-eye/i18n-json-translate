@@ -45,64 +45,61 @@ const parseNode = (() => {
     let total = 0;
     let completed = 0;
 
-    const updateBar = () => {
-        let percentage = 0;
-        if(total) {
-            percentage = completed/total;
-        } else {
-            percentage = 0;
-        }
-        bar.update(percentage*100);
-        // console.log({completed, total, percentage});
-    }
-
     return async(node) => {
-        const keys = Object.keys(node);
-        if(keys.includes('en')) {
-            await Promise.all(languages.map(async(langOut) => {
-                if(!node[langOut]) {
-                    try {
-                        total++;
-                        // updateBar();
-                        //const translationResult = await translate.translate(node['en'], {from: 'en', to});
-                        const translationResult = await translate.translate(node['en'], {
-                            langIn: 'en', // English
-                            langOut
-                        });
-                        node[langOut] = translationResult;
-                        completed++;
-                        // console.log({translationResult})
-                        // updateBar();
-                    } catch (e) {
-                        console.log('translate API Error', e);
-                    }
-                }
-            }))
-        } else if(keysIncludeAnyLang(keys)) {
-            node.en = '';
-            languages.forEach(lang => {
-                if(!node[lang]) {
-                    node[lang] = '';
-                }
-            })
-        } else {
-            await Promise.all(keys.map(async(key) =>
-                parseNode(node[key])
-            ));
+        if (!node) {
+            return
         }
+        if (Array.isArray(node)) {
+            await Promise.all(node.map(async (value, key) => {
+                await parseNode(node[key])
+            }))
+            return
+        }
+        await Promise.all(Object.keys(node).map(async (key) => {
+            if (typeof(node[key]) === 'string') {
+                try {
+                    total++;
+                    const translationResult = await translate.translate(node[key], {
+                        langIn: 'en', // English
+                        langOut: 'it'
+                    });
+                    node[key] = translationResult;
+                    completed++;
+                } catch (e) {
+                    console.log('translate API Error', e);
+                }
+                
+            } else {
+                await parseNode(node[key])
+            }
+        }))
     }
 })();
 
 const nodeToText = (node, depth = 0, keyName = 'const resources =') => {
-
-    const keys = Object.keys(node);
+    
     let text = '';
 
-    if(node.length || !node) {
+    if (!node) {
+        text += `${'    '.repeat(depth)}${keyName} null,
+`;
+        return text
+    }
 
+    const keys = Object.keys(node);
+
+    if(typeof(node) === 'string' || !node) {
         text += `${'    '.repeat(depth)}${keyName} \`${node.replace('`', '\\`')}\`,
 `;
 
+    } else if (Array.isArray(node)) {
+        text = `${'    '.repeat(depth)}${keyName} [
+`;
+        node.forEach((value, key) => {
+            text += nodeToText(node[key], depth+1, ``)
+        })
+            text += `${'    '.repeat(depth)}],
+`;
     } else {
             text = `${'    '.repeat(depth)}${keyName} {
 `;
